@@ -65,7 +65,7 @@ with DAG('forex_data',start_date=datetime(2024,4,16),schedule_interval="@daily",
     api_available = HttpSensor(
         task_id = 'api_available',
         http_conn_id = 'forex_api',
-        endpoint = 'api/latest.json?app_id=0546829a7f204fd7a870cefa722001c1',
+        endpoint = 'api/latest.json?app_id=****',
         response_check = lambda response: 'rates' in response.text,
         poke_interval =5,
         timeout = 20 
