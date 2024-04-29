@@ -1,0 +1,183 @@
+{
+    "name": "pl_copy_to_dl",
+    "properties": {
+        "activities": [
+            {
+                "name": "If Condition",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "Get Metadata",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(activity('Get Metadata').output.columnCount,5)",
+                        "type": "Expression"
+                    },
+                    "ifTrueActivities": [
+                        {
+                            "name": "Copy data api",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "DelimitedTextSource",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "quoteAllText": true,
+                                        "fileExtension": ".txt"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "ds_raw_data_api",
+                                    "type": "DatasetReference"
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "ds_forex_data",
+                                    "type": "DatasetReference"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Delete source",
+                            "type": "Delete",
+                            "dependsOn": [
+                                {
+                                    "activity": "Copy data api",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataset": {
+                                    "referenceName": "ds_raw_data_api",
+                                    "type": "DatasetReference"
+                                },
+                                "logStorageSettings": {
+                                    "linkedServiceName": {
+                                        "referenceName": "ls_forex_data",
+                                        "type": "LinkedServiceReference"
+                                    }
+                                },
+                                "enableLogging": true,
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "enablePartitionDiscovery": false
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "if_exists",
+                "type": "Validation",
+                "dependsOn": [],
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "ds_raw_data_api",
+                        "type": "DatasetReference"
+                    },
+                    "timeout": "0.12:00:00",
+                    "sleep": 10,
+                    "minimumSize": 1100
+                }
+            },
+            {
+                "name": "Get Metadata",
+                "type": "GetMetadata",
+                "dependsOn": [
+                    {
+                        "activity": "if_exists",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "ds_raw_data_api",
+                        "type": "DatasetReference"
+                    },
+                    "fieldList": [
+                        "exists",
+                        "columnCount"
+                    ],
+                    "storeSettings": {
+                        "type": "AzureBlobFSReadSettings",
+                        "recursive": true,
+                        "enablePartitionDiscovery": false
+                    },
+                    "formatSettings": {
+                        "type": "DelimitedTextReadSettings"
+                    }
+                }
+            }
+        ],
+        "folder": {
+            "name": "Ingestion"
+        },
+        "annotations": [],
+        "lastPublishTime": "2024-04-23T06:05:08Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

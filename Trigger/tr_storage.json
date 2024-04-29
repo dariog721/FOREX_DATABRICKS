@@ -1,0 +1,25 @@
+{
+    "name": "TR_STORAGE",
+    "properties": {
+        "annotations": [],
+        "runtimeState": "Stopped",
+        "pipelines": [
+            {
+                "pipelineReference": {
+                    "referenceName": "Exc",
+                    "type": "PipelineReference"
+                }
+            }
+        ],
+        "type": "BlobEventsTrigger",
+        "typeProperties": {
+            "blobPathBeginsWith": "/data/blobs/",
+            "blobPathEndsWith": "forex_rate.csv",
+            "ignoreEmptyBlobs": true,
+            "scope": "/subscriptions/cbbb23aa-f7e4-489f-96ba-c0e30369609b/resourceGroups/forex_rates_rg/providers/Microsoft.Storage/storageAccounts/forexratesdl",
+            "events": [
+                "Microsoft.Storage.BlobCreated"
+            ]
+        }
+    }
+}
