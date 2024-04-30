@@ -10,4 +10,4 @@
 
 #### Pipelines
 ![alt text](https://github.com/dariog721/FOREX_DATABRICKS/blob/main/Images/Pipelines/Ingestion_forex_data.png)
-![alt text](https://github.com/dariog721/FOREX_DATABRICKS/blob/main/Images/Pipelines/Exc.png)
+![alt text](https://github.com/dariog721/FOREX_DATABRICKS/blob/main/Images/Pipelines/Exc1.png)
